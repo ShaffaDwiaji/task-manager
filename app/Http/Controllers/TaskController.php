@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTaskRequest;
 use Illuminate\Http\Request;
 use App\Models\Task;
 
 class TaskController extends Controller
 {
+
+    public function main()
+    {
+        return view('main');
+    }
 
     public function index()
     {
@@ -19,8 +25,9 @@ class TaskController extends Controller
         return view('tasks.create');
     }
 
-    public function store(Request $request)
+    public function store(StoreTaskRequest $request)
     {
+        $request->validated();
         $task = new Task();
         $task->title = $request->title;
         $task->description = $request->description;
@@ -30,11 +37,17 @@ class TaskController extends Controller
         return redirect()->route('tasks.index');
     }
 
-    public function show(Task $task)
+    public function show($id)
     {
-        $task = Task::find($task);
+        $task = Task::find($id);
+    
+        if (!$task) {
+            return redirect()->route('tasks.index')->with('error', 'Task tidak ditemukan');
+        }
+    
         return view('tasks.show', compact('task'));
     }
+    
 
     public function edit(Task $task)
     {

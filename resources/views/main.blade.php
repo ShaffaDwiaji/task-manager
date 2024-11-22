@@ -38,6 +38,12 @@
                 Shaffa Dwiaji Feryansyah Putra <cite title="Source Title">234311028</cite>
             </figcaption>
         </figure>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="btn btn-outline-danger">Logout</button>
+            </form>
+        </div>
     </div>
 
     <!-- Bootstrap JS -->
