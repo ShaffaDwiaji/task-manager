@@ -6,14 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ApiResource;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class TaskController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
+    //  public function __construct(){
+    //     $this -> middleware(["role:superadmin"]);
+    //  }
+
     public function index()
     {
+        $this -> authorize('Lihat Task');
         $task = Task::latest()->paginate(10);
         return response()->json($task);
     }
@@ -23,7 +32,7 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        // $task = Task::created()
     }
 
     /**
@@ -31,7 +40,25 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-// 
+        $validator = Validator::make($request -> all(), [
+            'title' => 'required', 
+            'description' => 'required', 
+            'status' => 'required|in:pending, in_progress, completed', 
+            'due_date' => 'required|date',
+            'user_id' => 'required'
+        ]);
+
+        $store = Task::create([
+            'title' => $request -> title,
+            'description' => $request -> description,
+            'status' => $request -> status,
+            'due_date' => $request -> due_date,
+            'user_id' => $request -> user_id,
+        ]);
+
+        return new ApiResource(
+            $store, "Berhasil", "Completed"
+        );
     }
 
     /**
